@@ -1,0 +1,3 @@
+Tests, true, 11, 22, 33, 4.4, 55, 6.6, 7, 8, 9
+Videjas_vertibas, true, 128, 128, 128, 5.0, 128, 10.0, 17, 10, 128
+simuletiem_atteliem_nokalibretas_vertibas, true, 95, 84, 77, 0.5, 82, 4.5, 31, 10, 94

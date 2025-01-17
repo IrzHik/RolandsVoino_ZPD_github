@@ -1,0 +1,38 @@
+=== Analīzes rezultāti ===
+Izveidots: 2025-01-13 17:49:25
+
+Info:
+Attēls: 1
+GPA: 1
+Kalibrācijas šablons: Patstāvīgi pielāgots
+Uzticība: 17%
+Oriģināls attēls: 5796 px
+Reducēts attēls: 2352 px
+
+Neatkarīgie lielumi:
+150 - Redukcijas slieksnis.
+96 - Balts-Melns slieksnis (GPA strīpu garuma kļūda).
+96 - Balts-Melns slieksnis (Caurumu skaits un platība).
+0.0% - Lielo caurumu filtrācijas slieksnis (Caurumu skaits un platība).
+57 - Balts-Melns slieksnis (Baltu strīpu salīdzinājums).
+0.0% - Pilnīgo baltu strīpu filtrācijas slieksnis (Baltu strīpu salīdzinājums).
+23 - Grupu skaits.
+21% - Krāsu grupu skaita slieksnis.
+96 - Balts-Melns slieksnis (Kontrasts).
+
+Atkarīgie lielumi:
+1288 - Balti pikseļi.
+1064 - Melni pikseļi.
+54.77% - Baltu pikseļu relatīvais daudzums.
+0 - Caurumu skaits.
+0.00% - Caurumu kopējā platība.
+0 - Lielo caurumu skaits.
+0.00% - Lielo caurumu platība.
+8 - Baltu strīpu skaits.
+61.90% - Baltu strīpu kopējā platība.
+8 - Pilnīgo baltu strīpu skaits.
+61.90% - Pilnīgo baltu strīpu platība.
+100.0% - Pilnīgo baltu strīpu īpatsvars.
+Krāsu grupu skaits: 2
+Kontrasts: 162
+Relatīvais kontrasts: 63.5%
