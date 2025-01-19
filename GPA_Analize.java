@@ -20,9 +20,9 @@ public class GPA_Analize extends JFrame {
     private static final int PANEL_WIDTH = 320, PANEL_HEIGHT = 200;
     private static final int ANALYSIS_PANEL_WIDTH = 400, ANALYSIS_PANEL_HEIGHT = 160;
     private BufferedImage currentAnalysisImage;
-    private int[][] reducedMatrix;  // Add this field
-    private JLabel pixelAnalysisImageLabel; // Add this field
-    private JLabel[] pixelAnalysisInfoLabels; // Add this field
+    private int[][] reducedMatrix; 
+    private JLabel pixelAnalysisImageLabel; 
+    private JLabel[] pixelAnalysisInfoLabels; 
     private int originalPixelCount = 0;
     private int reducedPixelCount = 0;
     private boolean useReducedView = true;
@@ -47,7 +47,7 @@ public class GPA_Analize extends JFrame {
     private JLabel groupAnalysisImageLabel;
     private final String[] columnNames = {"Krāsa", "Grupas nr.", "Slieksnis", "Pikseļu skaits", "Sadalījums"};
     private Object[][] tableData = new Object[17][5];
-    private JLabel peakCountLabel; // Add this field
+    private JLabel peakCountLabel; 
     private JLabel peakThresholdLabel;
     private JSlider peakThresholdSlider;
     private int peakThreshold = 0;
@@ -65,14 +65,14 @@ public class GPA_Analize extends JFrame {
     private double whiteClusterValue4 = 0.0;
     private int whiteClusterThreshold = 180;
     private double whiteClusterSliderValue = 0.0;
-    private JLabel clusterPercentageLabel;  // Add this field
+    private JLabel clusterPercentageLabel; 
     private JComboBox<String> calibrationSelector;
     private List<CalibrationValues> calibrationsList = new ArrayList<>();
     private int currentCalibrationIndex = 0;
-    private JButton saveButton; // Add this field
-    private int contrastThreshold = 75;  // Add this line
-    private boolean isCustomSettings = false; // Add this line
-    private boolean isCustomCalibration = false; // Add this field
+    private JButton saveButton; 
+    private int contrastThreshold = 75;  
+    private boolean isCustomSettings = false; 
+    private boolean isCustomCalibration = false; 
 
     public GPA_Analize() {
         setupWindow();
@@ -89,7 +89,6 @@ public class GPA_Analize extends JFrame {
             if (files != null && files.length > 0) {
                 java.util.Arrays.sort(files);
                 for (File f : files) {
-                    // Extract the part after "Results_"
                     String displayName = f.getName().substring("Results_".length());
                     resultSelector.addItem(displayName);
                 }
@@ -104,7 +103,6 @@ public class GPA_Analize extends JFrame {
         
         String selectedResult = (String) resultSelector.getSelectedItem();
         if (selectedResult != null) {
-            // Add "Results_" prefix back for directory lookup
             currentResultDir = "Results_" + selectedResult;
             File resultDir = new File("Results", currentResultDir);
             java.util.List<String> items = searchRecursively(resultDir, ".txt").stream()
@@ -145,14 +143,12 @@ public class GPA_Analize extends JFrame {
             updateAnalysisBox(baseFolder, selectedNum);
             loadConfidence(baseFolder + "/" + selectedNum + "." + "/" + selectedNum + ".txt");
             updatePixelAnalysisBox(baseFolder, selectedNum);
-            // Add this line to trigger initial analysis
             if (pixelAnalysisImageLabel != null && pixelAnalysisInfoLabels != null) {
                 updatePixelAnalysisDisplay(currentAnalysisImage.getWidth(), currentAnalysisImage.getHeight());
             }
             updateModuleAnalysisBox(baseFolder, selectedNum);
-            updateWhiteClusterAnalysisBox(baseFolder, selectedNum);  // Add this line
+            updateWhiteClusterAnalysisBox(baseFolder, selectedNum);
             
-            // Trigger module analysis update
             if (moduleReducedMatrix != null) {
                 int width = moduleReducedMatrix[0].length;
                 int height = moduleReducedMatrix.length;
@@ -160,7 +156,7 @@ public class GPA_Analize extends JFrame {
                 updateModuleValues();
             }
             updateGroupAnalysisBox(baseFolder, selectedNum);
-            updateFifthAnalysisBox(baseFolder, selectedNum);  // Add this line
+            updateFifthAnalysisBox(baseFolder, selectedNum);
         }
         analysisBox.revalidate();
         analysisBox.repaint();
@@ -175,7 +171,7 @@ public class GPA_Analize extends JFrame {
     }
 
     private void setupWindow() {
-        setTitle("Gājēju pārejas apzīmējumu analīze");
+        setTitle("Gājēju pārejas apzīmējumu analīze - Rolands Voino, RTU Inženierzinātņu vidusskola, 2025");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -210,9 +206,8 @@ public class GPA_Analize extends JFrame {
             setFont(new Font("Segoe UI", Font.BOLD, 14));
         }});
         titleBar.add(crosswalkSelector);
-        addCalibrationSelector(titleBar); // Add this line
+        addCalibrationSelector(titleBar);
         
-        // Add save button
         saveButton = new JButton("Saglabāt datus");
         saveButton.setPreferredSize(new Dimension(200, 25));
         saveButton.addActionListener(e -> saveAnalysis());
@@ -228,7 +223,7 @@ public class GPA_Analize extends JFrame {
         contentWrapper.add(analysisBox);
         
         JScrollPane scrollPane = new JScrollPane(contentWrapper);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);  // Make scrolling faster
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); 
         add(scrollPane, BorderLayout.CENTER);
         
         add(titleBar, BorderLayout.NORTH);
@@ -272,10 +267,9 @@ public class GPA_Analize extends JFrame {
         mainBlock.setBackground(new Color(245, 245, 245));
         mainBlock.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.GRAY, 1),
-            BorderFactory.createEmptyBorder(10, 10, 10, 10) // Reduced padding from 15
+            BorderFactory.createEmptyBorder(10, 10, 10, 10) 
         ));
 
-        // Original image panel with custom scaling
         JPanel originalPanel = new JPanel();
         originalPanel.setOpaque(false);
         originalPanel.setLayout(new BoxLayout(originalPanel, BoxLayout.Y_AXIS));
@@ -304,12 +298,10 @@ public class GPA_Analize extends JFrame {
         originalPanel.add(Box.createVerticalGlue());
         mainBlock.add(originalPanel);
 
-        // Confidence section - transparent background
         JPanel confidencePanel = new JPanel();
         confidencePanel.setOpaque(false);
         confidencePanel.setLayout(new BoxLayout(confidencePanel, BoxLayout.Y_AXIS));
         
-        // First row - Confidence in one line
         JPanel confidenceRow = new JPanel(new FlowLayout(FlowLayout.CENTER));
         confidenceRow.setOpaque(false);
         JLabel confidenceLabel = new JLabel("Uzticība: " + confidence + "%");
@@ -317,7 +309,6 @@ public class GPA_Analize extends JFrame {
         confidenceLabel.setForeground(THEME_COLOR);
         confidenceRow.add(confidenceLabel);
         
-        // Second row - Pixel counts
         JPanel pixelCountRow = new JPanel();
         pixelCountRow.setLayout(new BoxLayout(pixelCountRow, BoxLayout.Y_AXIS));
         pixelCountRow.setOpaque(false);
@@ -342,7 +333,6 @@ public class GPA_Analize extends JFrame {
         confidencePanel.add(Box.createVerticalGlue());
         mainBlock.add(confidencePanel);
 
-        // Modify crosswalk image section
         JPanel crosswalkPanel = new JPanel();
         crosswalkPanel.setLayout(new BoxLayout(crosswalkPanel, BoxLayout.Y_AXIS));
         crosswalkPanel.setOpaque(false);
@@ -351,14 +341,12 @@ public class GPA_Analize extends JFrame {
         crosswalkLabel.setHorizontalAlignment(JLabel.CENTER);
         crosswalkLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add threshold value label
         JLabel thresholdLabel = new JLabel("Redukcijas slieksnis: " + boundaryThreshold);
         thresholdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         thresholdLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
-        // Add slider for boundary detection with shorter width
         JSlider boundarySlider = new JSlider(0, 255, boundaryThreshold);
-        boundarySlider.setPreferredSize(new Dimension(PANEL_WIDTH - 140, 20)); // Made shorter to accommodate buttons
+        boundarySlider.setPreferredSize(new Dimension(PANEL_WIDTH - 140, 20)); 
         boundarySlider.setMaximumSize(new Dimension(PANEL_WIDTH - 140, 20));
         boundarySlider.setAlignmentX(Component.CENTER_ALIGNMENT);
         
@@ -372,7 +360,6 @@ public class GPA_Analize extends JFrame {
             int height = originalImage.getHeight();
             int[][] imageData = new int[height][width];
             
-            // Convert image to array once
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     int pixel = originalImage.getRGB(x, y);
@@ -386,10 +373,8 @@ public class GPA_Analize extends JFrame {
                 }
             }
 
-            // Count original non-transparent pixels
             originalPixelCount = countNonTransparentPixels(imageData);
             
-            // Function to update image with new boundary
             Runnable updateBoundary = () -> {
                 try {
                     BufferedImage imageWithBoundary = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -406,13 +391,12 @@ public class GPA_Analize extends JFrame {
                         g2d.drawLine(bounds.bottom.x, bounds.bottom.y, bounds.left.x, bounds.left.y);
                         g2d.drawLine(bounds.left.x, bounds.left.y, bounds.top.x, bounds.top.y);
                         
-                        // Update all analysis blocks when boundary changes
                         updateReducedMatrix(imageData, bounds);
                         updatePixelAnalysisDisplay(width, height);
                         updateModuleAnalysisDisplay(width, height);
                         updateWhiteClusterAnalysis();
                         updateGroupAnalysis();
-                        updateFifthAnalysisDisplay(width, height); // Add this line
+                        updateFifthAnalysisDisplay(width, height);
                     }
                     g2d.dispose();
                     
@@ -423,39 +407,33 @@ public class GPA_Analize extends JFrame {
                 }
             };
 
-            // Initial boundary drawing
             updateBoundary.run();
 
-            // Add slider change listener
             boundarySlider.addChangeListener(e -> {
                 boundaryThreshold = boundarySlider.getValue();
                 thresholdLabel.setText("Redukcijas slieksnis: " + boundaryThreshold);
                 updateBoundary.run();
-                setCustomCalibration(); // Add this line
+                setCustomCalibration(); 
             });
 
-            // After updating reducedMatrix
             reducedPixelCount = countNonTransparentPixels(reducedMatrix);
 
-            // In updateAnalysisBox method, update the toggle button section:
             pixelRuleToggle = new JButton("Redukcija: " + (use4PixelRule ? "Ieslēgts" : "Izslēgts"));
             pixelRuleToggle.setAlignmentX(Component.CENTER_ALIGNMENT);
             pixelRuleToggle.addActionListener(e -> {
                 use4PixelRule = !use4PixelRule;
                 pixelRuleToggle.setText("Redukcija: " + (use4PixelRule ? "Ieslēgts" : "Izslēgts"));
                 
-                // Re-run boundary detection with current settings
                 BoundaryPoints bounds = findBoundaryPoints(imageData, boundarySlider.getValue());
                 updateReducedMatrix(imageData, bounds);
                 
-                // Update all analysis blocks
                 updatePixelAnalysisDisplay(width, height);
                 updateModuleAnalysisDisplay(width, height);
                 updateWhiteClusterAnalysis();
                 updateGroupAnalysis();
-                updateFifthAnalysisDisplay(width, height); // Add this line
+                updateFifthAnalysisDisplay(width, height); 
                 updateBoundary.run();
-                setCustomCalibration(); // Add this line
+                setCustomCalibration(); 
             });
 
         } catch (Exception e) {
@@ -465,7 +443,7 @@ public class GPA_Analize extends JFrame {
         crosswalkPanel.add(crosswalkLabel);
         crosswalkPanel.add(Box.createVerticalStrut(5));
         crosswalkPanel.add(thresholdLabel);
-        crosswalkPanel.add(sliderPanel); // Add the panel instead of just the slider
+        crosswalkPanel.add(sliderPanel); 
 
         crosswalkPanel.add(Box.createVerticalStrut(5));
         crosswalkPanel.add(pixelRuleToggle);
@@ -489,7 +467,7 @@ public class GPA_Analize extends JFrame {
             for (int x = 0; x < width; x++) {
                 int pixel = image.getRGB(x, y);
                 int alpha = (pixel >> 24) & 0xff;
-                if (alpha < 128) continue; // Skip transparent pixels
+                if (alpha < 128) continue; 
                 
                 Color color = new Color(pixel, true);
                 int brightness = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
@@ -508,10 +486,9 @@ public class GPA_Analize extends JFrame {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (data[y][x] == -1) {
-                    // Transparent pixel
+                   
                     image.setRGB(x, y, new Color(0, 0, 0, 0).getRGB());
                 } else {
-                    // Binary black or white based on threshold
                     int value = data[y][x] > brightnessThreshold ? 255 : 0;
                     image.setRGB(x, y, new Color(value, value, value).getRGB());
                 }
@@ -532,7 +509,6 @@ public class GPA_Analize extends JFrame {
         int height = imageData.length;
         Point top = null, right = null, bottom = null, left = null;
 
-        // Find top point
         topLoop: for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (imageData[y][x] != -1 && imageData[y][x] > 120) {
@@ -542,7 +518,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find right point
         rightLoop: for (int x = width - 1; x >= 0; x--) {
             for (int y = 0; y < height; y++) {
                 if (imageData[y][x] != -1 && imageData[y][x] > 120) {
@@ -552,7 +527,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find bottom point
         bottomLoop: for (int y = height - 1; y >= 0; y--) {
             for (int x = width - 1; x >= 0; x--) {
                 if (imageData[y][x] != -1 && imageData[y][x] > 120) {
@@ -562,7 +536,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find left point
         leftLoop: for (int x = 0; x < width; x++) {
             for (int y = height - 1; y >= 0; y--) {
                 if (imageData[y][x] != -1 && imageData[y][x] > 120) {
@@ -580,7 +553,6 @@ public class GPA_Analize extends JFrame {
         int height = imageData.length;
         Point top = null, right = null, bottom = null, left = null;
 
-        // Find top point
         topLoop: for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (imageData[y][x] != -1 && imageData[y][x] > threshold) {
@@ -590,7 +562,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find right point
         rightLoop: for (int x = width - 1; x >= 0; x--) {
             for (int y = 0; y < height; y++) {
                 if (imageData[y][x] != -1 && imageData[y][x] > threshold) {
@@ -600,7 +571,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find bottom point
         bottomLoop: for (int y = height - 1; y >= 0; y--) {
             for (int x = width - 1; x >= 0; x--) {
                 if (imageData[y][x] != -1 && imageData[y][x] > threshold) {
@@ -610,7 +580,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Find left point
         leftLoop: for (int x = 0; x < width; x++) {
             for (int y = height - 1; y >= 0; y--) {
                 if (imageData[y][x] != -1 && imageData[y][x] > threshold) {
@@ -620,7 +589,6 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // After finding all boundary points, update the reduced matrix
         if (top != null && right != null && bottom != null && left != null) {
             updateReducedMatrix(imageData, new BoundaryPoints(top, right, bottom, left));
         }
@@ -633,7 +601,6 @@ public class GPA_Analize extends JFrame {
         int height = imageData.length;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        // Draw original image
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (imageData[y][x] == -1) {
@@ -645,20 +612,17 @@ public class GPA_Analize extends JFrame {
             }
         }
 
-        // Draw boundary lines in red
         Graphics2D g2d = image.createGraphics();
         g2d.setColor(Color.RED);
         g2d.setStroke(new BasicStroke(1));
 
         if (bounds.top != null && bounds.right != null && 
             bounds.bottom != null && bounds.left != null) {
-            // Draw lines
             g2d.drawLine(bounds.top.x, bounds.top.y, bounds.right.x, bounds.right.y);
             g2d.drawLine(bounds.right.x, bounds.right.y, bounds.bottom.x, bounds.bottom.y);
             g2d.drawLine(bounds.bottom.x, bounds.bottom.y, bounds.left.x, bounds.left.y);
             g2d.drawLine(bounds.left.x, bounds.left.y, bounds.top.x, bounds.top.y);
 
-            // Draw points
             int pointSize = 3;
             g2d.fillOval(bounds.top.x - pointSize/2, bounds.top.y - pointSize/2, pointSize, pointSize);
             g2d.fillOval(bounds.right.x - pointSize/2, bounds.right.y - pointSize/2, pointSize, pointSize);
@@ -681,16 +645,13 @@ public class GPA_Analize extends JFrame {
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        // Left side - Generated image panel with title
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setOpaque(false);
 
-        // Image panel with padding and background
         JPanel imageWrapper = new JPanel(new BorderLayout());
         imageWrapper.setOpaque(false);
         
-        // Background panel for the image
         JPanel imageBackground = new JPanel(new BorderLayout());
         imageBackground.setBackground(THEME_COLOR);
         imageBackground.setBorder(BorderFactory.createCompoundBorder(
@@ -707,7 +668,6 @@ public class GPA_Analize extends JFrame {
         leftPanel.add(imageWrapper);
         leftPanel.add(Box.createVerticalStrut(5));
 
-        // Right side - Stats and controls
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setOpaque(false);
@@ -716,12 +676,10 @@ public class GPA_Analize extends JFrame {
             String imagePath = baseFolder + "/" + crosswalkNum + "." + "/" + crosswalkNum + ".png";
             currentAnalysisImage = ImageIO.read(new File(imagePath));
             
-            // Convert image to array data with transparency support
             int width = currentAnalysisImage.getWidth();
             int height = currentAnalysisImage.getHeight();
             int[][] imageData = new int[height][width];
             
-            // First populate imageData
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     int pixel = currentAnalysisImage.getRGB(x, y);
@@ -735,17 +693,14 @@ public class GPA_Analize extends JFrame {
                 }
             }
 
-            // Find boundary points and update reducedMatrix
             BoundaryPoints bounds = findBoundaryPoints(imageData);
             updateReducedMatrix(imageData, bounds);
 
-            // Create binary image instead of boundary image for initial display
             BufferedImage initialBinaryImage = createBinaryImage(reducedMatrix, width, height);
             Dimension scaledDim = getScaledDimension(width, height, ANALYSIS_PANEL_WIDTH / 3, ANALYSIS_PANEL_HEIGHT);
             Image scaled = initialBinaryImage.getScaledInstance(scaledDim.width, scaledDim.height, Image.SCALE_SMOOTH);
             imageLabel.setIcon(new ImageIcon(scaled));
 
-            // Stats panel with consistent styling
             JPanel statsPanel = new JPanel();
             statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
             statsPanel.setOpaque(false);
@@ -753,7 +708,6 @@ public class GPA_Analize extends JFrame {
 
             PixelCounts counts = countMatrixPixels(reducedMatrix);
             
-            // Create labels with consistent style
             JLabel[] infoLabels = {
                 new JLabel("Baltie pikseļi: " + counts.white),
                 new JLabel("Melnie pikseļi: " + counts.black),
@@ -768,13 +722,12 @@ public class GPA_Analize extends JFrame {
                 statsPanel.add(Box.createVerticalStrut(5));
             }
 
-            // Slider panel
             JPanel sliderPanel = new JPanel();
             sliderPanel.setOpaque(false);
             sliderPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
             
             JSlider thresholdSlider = new JSlider(0, 255, brightnessThreshold);
-            thresholdSlider.setPreferredSize(new Dimension(160, 20)); // Made shorter to accommodate buttons
+            thresholdSlider.setPreferredSize(new Dimension(160, 20));
             thresholdSlider.setBackground(new Color(245, 245, 245));
             
             JPanel sliderWithButtons = createSliderWithButtons(thresholdSlider, infoLabels[2], "Balts-Melns slieksnis");
@@ -791,10 +744,9 @@ public class GPA_Analize extends JFrame {
                 infoLabels[0].setText("Balti:Melni pikseļi: " + newCounts.white + " : " + newCounts.black);
                 double percentage = Math.ceil((double) newCounts.white / (newCounts.white + newCounts.black) * 100 * 100) / 100.0;
                 infoLabels[1].setText("Baltu pikseļu rel. daudzums: " + percentage + "%");
-                setCustomCalibration(); // Add this line
+                setCustomCalibration();
             });
 
-            // Add title before stats
             JLabel titleLabel = new JLabel("GPA strīpu garuma kļūdas");
             titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
             titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -808,11 +760,9 @@ public class GPA_Analize extends JFrame {
             rightPanel.add(sliderPanel);
             rightPanel.add(Box.createVerticalGlue());
 
-            // Store the label reference
             pixelAnalysisImageLabel = imageLabel;
             pixelAnalysisInfoLabels = infoLabels;
 
-            // Add this to trigger initial analysis
             updatePixelAnalysisDisplay(width, height);
 
         } catch (Exception e) {
@@ -832,21 +782,17 @@ public class GPA_Analize extends JFrame {
         int height = originalData.length;
         int[][] boundedData = new int[height][width];
         
-        // Initialize all values to -1
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 boundedData[y][x] = -1;
             }
         }
         
-        // Only proceed if we have valid boundary points
         if (bounds.top == null || bounds.right == null || 
             bounds.bottom == null || bounds.left == null) {
             return boundedData;
         }
 
-        // Create line equations for each boundary
-        // For each pixel, check if it's inside all four lines
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (isInsideBoundary(x, y, bounds)) {
@@ -859,7 +805,6 @@ public class GPA_Analize extends JFrame {
     }
 
     private boolean isInsideBoundary(int x, int y, BoundaryPoints bounds) {
-        // Check if point is on the correct side of all four lines
         return isOnCorrectSide(x, y, bounds.top, bounds.right, true) &&
                isOnCorrectSide(x, y, bounds.right, bounds.bottom, true) &&
                isOnCorrectSide(x, y, bounds.bottom, bounds.left, true) &&
@@ -867,7 +812,6 @@ public class GPA_Analize extends JFrame {
     }
 
     private boolean isOnCorrectSide(int x, int y, Point p1, Point p2, boolean positive) {
-        // Calculate which side of the line the point is on using cross product
         int crossProduct = (p2.x - p1.x) * (y - p1.y) - (p2.y - p1.y) * (x - p1.x);
         return positive ? crossProduct >= 0 : crossProduct <= 0;
     }
@@ -878,7 +822,6 @@ public class GPA_Analize extends JFrame {
         panel.setOpaque(false);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Create buttons with fixed size
         JButton minusBtn = new JButton("-");
         JButton plusBtn = new JButton("+");
         Dimension btnSize = new Dimension(25, 25);
@@ -889,21 +832,18 @@ public class GPA_Analize extends JFrame {
         minusBtn.setMaximumSize(btnSize);
         plusBtn.setMaximumSize(btnSize);
         
-        // Style the buttons
         Font buttonFont = new Font("Arial", Font.BOLD, 14);
         minusBtn.setFont(buttonFont);
         plusBtn.setFont(buttonFont);
         minusBtn.setMargin(new Insets(0, 0, 0, 0));
         plusBtn.setMargin(new Insets(0, 0, 0, 0));
 
-        // Add button actions
         minusBtn.addActionListener(e -> {
             int val = slider.getValue();
             if (val > slider.getMinimum()) {
                 if (prefix.contains("filtrācijas slieksnis") || prefix.equals("Izmērs")) {
-                    // For percentage sliders, decrease by 0.1%
                     double currentVal = val / 10.0;
-                    currentVal = Math.round((currentVal - 0.1) * 10) / 10.0; // Round to 1 decimal
+                    currentVal = Math.round((currentVal - 0.1) * 10) / 10.0;
                     slider.setValue((int)(currentVal * 10));
                     label.setText(prefix + ": " + String.format("%.1f%%", currentVal));
                 } else if (prefix.contains("grupu skaita slieksnis")) {
@@ -914,16 +854,15 @@ public class GPA_Analize extends JFrame {
                     label.setText(prefix + ": " + (val - 1));
                 }
             }
-            setCustomCalibration(); // Add this line
+            setCustomCalibration();
         });
         
         plusBtn.addActionListener(e -> {
             int val = slider.getValue();
             if (val < slider.getMaximum()) {
                 if (prefix.contains("filtrācijas slieksnis") || prefix.equals("Izmērs")) {
-                    // For percentage sliders, increase by 0.1%
                     double currentVal = val / 10.0;
-                    currentVal = Math.round((currentVal + 0.1) * 10) / 10.0; // Round to 1 decimal
+                    currentVal = Math.round((currentVal + 0.1) * 10) / 10.0; 
                     slider.setValue((int)(currentVal * 10));
                     label.setText(prefix + ": " + String.format("%.1f%%", currentVal));
                 } else if (prefix.contains("grupu skaita slieksnis")) {
@@ -934,7 +873,7 @@ public class GPA_Analize extends JFrame {
                     label.setText(prefix + ": " + (val + 1));
                 }
             }
-            setCustomCalibration(); // Add this line
+            setCustomCalibration();
         });
 
         panel.add(minusBtn);
@@ -944,7 +883,7 @@ public class GPA_Analize extends JFrame {
         panel.add(plusBtn);
 
         slider.addChangeListener(e -> {
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
         return panel;
@@ -956,7 +895,6 @@ public class GPA_Analize extends JFrame {
         reducedMatrix = new int[height][width];
 
         if (use4PixelRule) {
-            // Use 4-point boundary algorithm
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (isInsideBoundary(x, y, bounds)) {
@@ -967,17 +905,14 @@ public class GPA_Analize extends JFrame {
                 }
             }
         } else {
-            // Just copy the original matrix without reduction
             for (int y = 0; y < height; y++) {
                 System.arraycopy(imageData[y], 0, reducedMatrix[y], 0, width);
             }
         }
 
-        // Update pixel counts
         originalPixelCount = countNonTransparentPixels(imageData);
         reducedPixelCount = countNonTransparentPixels(reducedMatrix);
         
-        // Update labels
         if (originalCountLabel != null && reducedCountLabel != null) {
             originalCountLabel.setText("Oriģināls attēls: " + originalPixelCount + " px");
             reducedCountLabel.setText("Reducēts attēls: " + reducedPixelCount + " px");
@@ -988,7 +923,7 @@ public class GPA_Analize extends JFrame {
         int white = 0, black = 0;
         for (int y = 0; y < matrix.length; y++) {
             for (int x = 0; x < matrix[0].length; x++) {
-                if (matrix[y][x] == -1) continue; // Skip transparent pixels
+                if (matrix[y][x] == -1) continue; 
                 
                 if (matrix[y][x] > brightnessThreshold) {
                     white++;
@@ -1002,13 +937,11 @@ public class GPA_Analize extends JFrame {
 
     private void updatePixelAnalysisDisplay(int width, int height) {
         if (pixelAnalysisImageLabel != null && pixelAnalysisInfoLabels != null) {
-            // Update image
             BufferedImage newImage = createBinaryImage(reducedMatrix, width, height);
             Dimension scaledDim = getScaledDimension(width, height, ANALYSIS_PANEL_WIDTH / 3, ANALYSIS_PANEL_HEIGHT);
             Image newScaled = newImage.getScaledInstance(scaledDim.width, scaledDim.height, Image.SCALE_SMOOTH);
             pixelAnalysisImageLabel.setIcon(new ImageIcon(newScaled));
 
-            // Update pixel counts
             PixelCounts newCounts = countMatrixPixels(reducedMatrix);
             pixelAnalysisInfoLabels[0].setText("Balti : Melni pikseļi : " + newCounts.white + " : " + newCounts.black);
             double percentage = Math.ceil((double) newCounts.white / (newCounts.white + newCounts.black) * 100 * 100) / 100.0;
@@ -1037,7 +970,6 @@ public class GPA_Analize extends JFrame {
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        // Left side - Same as second block
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setOpaque(false);
@@ -1059,12 +991,10 @@ public class GPA_Analize extends JFrame {
 
         leftPanel.add(imageWrapper);
 
-        // Right side - Controls and values
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setOpaque(false);
 
-        // Values panel
         JPanel valuesPanel = new JPanel();
         valuesPanel.setLayout(new BoxLayout(valuesPanel, BoxLayout.Y_AXIS));
         valuesPanel.setOpaque(false);
@@ -1079,30 +1009,25 @@ public class GPA_Analize extends JFrame {
             new JLabel("Lielo caurumu filtrācijas slieksnis: " + String.format("%.1f", moduleSliderValue) + "%")
         };
 
-        // Add sliders and reorganize panels
         JSlider thresholdSlider = new JSlider(0, 255, moduleThreshold);
         JLabel thresholdValueLabel = moduleAnalysisInfoLabels[4];
         JPanel thresholdSliderPanel = createSliderWithButtons(thresholdSlider, thresholdValueLabel, "Threshold");
 
-        // Add values panel first
         Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
-        for (int i = 0; i < 4; i++) { // Add only the first 4 value labels
+        for (int i = 0; i < 4; i++) {
             moduleAnalysisInfoLabels[i].setFont(labelFont);
             moduleAnalysisInfoLabels[i].setAlignmentX(Component.CENTER_ALIGNMENT);
             valuesPanel.add(moduleAnalysisInfoLabels[i]);
             valuesPanel.add(Box.createVerticalStrut(5));
         }
 
-        // Add threshold slider
         thresholdSlider.addChangeListener(e -> {
             moduleThreshold = thresholdSlider.getValue();
             thresholdValueLabel.setText("Threshold: " + moduleThreshold);
-            // TODO: Add your processing logic here
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
-        // Add fine control slider between the values and second slider
-        JSlider fineControlSlider = new JSlider(0, 100, 0); // 0 = 0.0%, 100 = 10.0%
+        JSlider fineControlSlider = new JSlider(0, 100, 0); 
         fineControlSlider.setPreferredSize(new Dimension(160, 20));
         fineControlSlider.setMaximumSize(new Dimension(160, 20));
         
@@ -1112,25 +1037,22 @@ public class GPA_Analize extends JFrame {
         JPanel fineControlPanel = createSliderWithButtons(fineControlSlider, fineControlLabel, "Lielo caurumu filtrācijas slieksnis");
 
         fineControlSlider.addChangeListener(e -> {
-            moduleSliderValue = fineControlSlider.getValue() / 10.0; // Convert to percentage (0.0% - 10.0%)
+            moduleSliderValue = fineControlSlider.getValue() / 10.0; 
             fineControlLabel.setText("Lielo caurumu filtrācijas slieksnis: " + String.format("%.1f", moduleSliderValue) + "%");
             
-            // Update analysis when slider changes
             if (moduleReducedMatrix != null) {
                 int width = moduleReducedMatrix[0].length;
                 int height = moduleReducedMatrix.length;
                 updateModuleAnalysisDisplay(width, height);
             }
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
-        // Modify slider size
         thresholdSlider.setPreferredSize(new Dimension(160, 20));
         thresholdSlider.setMaximumSize(new Dimension(160, 20));
         fineControlSlider.setPreferredSize(new Dimension(160, 20));
         fineControlSlider.setMaximumSize(new Dimension(160, 20));
 
-        // Add title before values
         JLabel titleLabel = new JLabel("Caurumu skaits un platība");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1142,7 +1064,6 @@ public class GPA_Analize extends JFrame {
         rightPanel.add(valuesPanel);
         rightPanel.add(Box.createVerticalStrut(10));
         
-        // Add current threshold value right after Value 4
         JLabel currentThresholdLabel = new JLabel("Balts-Melns slieksnis: " + moduleThreshold);
         currentThresholdLabel.setFont(labelFont);
         currentThresholdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1156,34 +1077,29 @@ public class GPA_Analize extends JFrame {
         rightPanel.add(fineControlPanel);
         rightPanel.add(Box.createVerticalGlue());
 
-        // Update threshold display when slider changes
         thresholdSlider.addChangeListener(e -> {
             moduleThreshold = thresholdSlider.getValue();
             thresholdValueLabel.setText("Threshold: " + moduleThreshold);
             currentThresholdLabel.setText("Balts-Melns slieksnis: " + moduleThreshold);
             
-            // Update display when threshold changes
             if (moduleReducedMatrix != null) {
                 int width = moduleReducedMatrix[0].length;
                 int height = moduleReducedMatrix.length;
                 updateModuleAnalysisDisplay(width, height);
-                updateModuleValues(); // Add this call
+                updateModuleValues(); 
             }
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
-        // Initially show the same image as second block and analyze
         if (reducedMatrix != null) {
             int width = reducedMatrix[0].length;
             int height = reducedMatrix.length;
             
-            // Create a copy of reducedMatrix for module analysis
             moduleReducedMatrix = new int[height][width];
             for (int y = 0; y < height; y++) {
                 System.arraycopy(reducedMatrix[y], 0, moduleReducedMatrix[y], 0, width);
             }
 
-            // Trigger initial analysis
             updateModuleAnalysisDisplay(width, height);
             updateModuleValues();
         }
@@ -1197,7 +1113,6 @@ public class GPA_Analize extends JFrame {
 
     private void updateModuleValues() {
         if (moduleReducedMatrix != null) {
-            // Create matrix copy and convert to binary
             int height = moduleReducedMatrix.length;
             int width = moduleReducedMatrix[0].length;
             int[][] matrixCopy = new int[height][width];
@@ -1205,7 +1120,6 @@ public class GPA_Analize extends JFrame {
                 System.arraycopy(moduleReducedMatrix[y], 0, matrixCopy[y], 0, width);
             }
             
-            // Convert to binary using moduleThreshold
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (matrixCopy[y][x] != -1) {
@@ -1220,11 +1134,9 @@ public class GPA_Analize extends JFrame {
             int validHoleCount = 0;
             int validHoleArea = 0;
 
-            // Calculate minimum hole size as percentage of total pixels
-            double minHolePercentage = moduleSliderValue; // Now directly represents percentage
+            double minHolePercentage = moduleSliderValue; 
             int minHoleSize = (int)((minHolePercentage / 100.0) * reducedPixelCount);
 
-            // Find and measure holes
             java.util.List<Integer> holeSizes = new java.util.ArrayList<>();
             
             for (int y = 0; y < height; y++) {
@@ -1236,7 +1148,6 @@ public class GPA_Analize extends JFrame {
                             totalHoleCount++;
                             totalHoleArea += holeSize;
                             
-                            // Only count holes that meet the minimum size requirement
                             if (holeSize >= minHoleSize) {
                                 validHoleCount++;
                                 validHoleArea += holeSize;
@@ -1246,7 +1157,6 @@ public class GPA_Analize extends JFrame {
                 }
             }
 
-            // Calculate percentages and round to 2 decimal places
             double totalHolePercentage = Math.round((totalHoleArea * 100.0 / reducedPixelCount) * 100.0) / 100.0;
             double validHolePercentage = Math.round((validHoleArea * 100.0 / reducedPixelCount) * 100.0) / 100.0;
 
@@ -1255,7 +1165,6 @@ public class GPA_Analize extends JFrame {
             moduleValue3 = validHoleCount;
             moduleValue4 = validHolePercentage;
 
-            // Update labels
             if (moduleAnalysisInfoLabels != null) {
                 moduleAnalysisInfoLabels[0].setText("Caurumu skaits: " + (int)moduleValue1);
                 moduleAnalysisInfoLabels[1].setText("Caurumu kopējā platība: " + String.format("%.2f%%", moduleValue2));
@@ -1275,7 +1184,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
     queue.add(new int[]{startX, startY});
     visited[startY][startX] = true;
 
-    // Check 8 directions including diagonals
     int[] dx = {-1, 0, 1, -1, 1, -1, 0, 1};
     int[] dy = {-1, -1, -1, 0, 0, 1, 1, 1};
 
@@ -1285,24 +1193,20 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         int y = current[1];
         holeSize++;
 
-        // Check all 8 neighboring pixels
         for (int i = 0; i < 8; i++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            // Check if neighbor is outside matrix bounds
             if (nx < 0 || ny < 0 || nx >= width || ny >= height) {
                 isValidHole = false;
                 break;
             }
 
-            // Check if neighbor is transparent (-1)
             if (matrix[ny][nx] == -1) {
                 isValidHole = false;
                 break;
             }
 
-            // If neighbor is unvisited black pixel, add to queue
             if (matrix[ny][nx] == 0 && !visited[ny][nx]) {
                 queue.add(new int[]{nx, ny});
                 visited[ny][nx] = true;
@@ -1310,7 +1214,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         }
     }
 
-    // Clear remaining queue and mark remaining pixels as visited
     while (!queue.isEmpty()) {
         int[] current = queue.poll();
         visited[current[1]][current[0]] = true;
@@ -1319,50 +1222,40 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
     return isValidHole ? holeSize : 0;
 }
 
-    // Modify the updateModuleAnalysisDisplay method
     private void updateModuleAnalysisDisplay(int width, int height) {
         if (moduleAnalysisImageLabel != null && moduleReducedMatrix != null) {
-            // Copy current reducedMatrix to moduleReducedMatrix
             for (int y = 0; y < height; y++) {
                 System.arraycopy(reducedMatrix[y], 0, moduleReducedMatrix[y], 0, width);
             }
             
-            // Update module values first to calculate holes
             updateModuleValues();
             
-            // Create new image
             BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             
-            // Create visited array for flood fill
             boolean[][] visited = new boolean[height][width];
             
-            // Calculate minimum hole size threshold
             double minHolePercentage = moduleSliderValue;
             int minHoleSize = (int)((minHolePercentage / 100.0) * reducedPixelCount);
             
-            // First, draw the base binary image
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    if (moduleReducedMatrix[y][x] == -1) {
-                        newImage.setRGB(x, y, new Color(0, 0, 0, 0).getRGB());
-                    } else {
+                    if (moduleReducedMatrix[y][x] != -1) {
                         int value = moduleReducedMatrix[y][x] > moduleThreshold ? 255 : 0;
                         newImage.setRGB(x, y, new Color(value, value, value).getRGB());
+                    } else {
+                        newImage.setRGB(x, y, new Color(0, 0, 0, 0).getRGB());
                     }
                 }
             }
             
-            // Then find and color the holes
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (!visited[y][x] && moduleReducedMatrix[y][x] != -1 && 
                         moduleReducedMatrix[y][x] <= moduleThreshold) {
-                        // Collect pixels in this hole
                         java.util.List<Point> holePixels = new java.util.ArrayList<>();
                         int holeSize = floodFillWithPixels(moduleReducedMatrix, visited, x, y, holePixels);
                         
                         if (holeSize > 0) {
-                            // Color the hole based on its size
                             Color holeColor = holeSize >= minHoleSize ? Color.GREEN : Color.RED;
                             for (Point p : holePixels) {
                                 newImage.setRGB(p.x, p.y, holeColor.getRGB());
@@ -1378,7 +1271,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         }
     }
 
-    // Add new method for flood fill that collects pixels
     private int floodFillWithPixels(int[][] matrix, boolean[][] visited, int startX, int startY, 
                                    java.util.List<Point> pixels) {
         int height = matrix.length;
@@ -1402,19 +1294,16 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 int nx = current.x + dx[i];
                 int ny = current.y + dy[i];
 
-                // Check bounds first
                 if (nx < 0 || ny < 0 || nx >= width || ny >= height) {
                     isValidHole = false;
                     break;
                 }
 
-                // Check for transparency
                 if (matrix[ny][nx] == -1) {
                     isValidHole = false;
                     break;
                 }
 
-                // If unvisited and black pixel, add to queue
                 if (!visited[ny][nx] && matrix[ny][nx] <= moduleThreshold) {
                     queue.add(new Point(nx, ny));
                     visited[ny][nx] = true;
@@ -1445,10 +1334,8 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        // Right side now becomes left side - Controls and Table
         JPanel leftPanel = createGroupControlPanel();
         
-        // Left side now becomes right side - Image
         JPanel rightPanel = createGroupImagePanel();
 
         analysisBlock.add(rightPanel);
@@ -1469,19 +1356,16 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         
         BufferedImage binaryImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
-        // Calculate group boundaries
         double rangeSize = 256.0 / groupCount;
         int[][] pixelGroups = new int[groupCount][2];
         int[] groupPixelCounts = new int[groupCount];
         
-        // Initialize group boundaries
         for (int i = 0; i < groupCount; i++) {
             pixelGroups[i][0] = (int)(i * rangeSize);
             pixelGroups[i][1] = (int)((i + 1) * rangeSize - 1);
             if (i == groupCount - 1) pixelGroups[i][1] = 255;
         }
 
-        // Count pixels and assign colors
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (reducedMatrix[y][x] != -1) {
@@ -1491,7 +1375,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                     
                     groupPixelCounts[groupIndex]++;
                     
-                    // Calculate color based on group's middle value
                     int middleValue = (pixelGroups[groupIndex][0] + pixelGroups[groupIndex][1]) / 2;
                     Color groupColor = new Color(middleValue, middleValue, middleValue);
                     binaryImage.setRGB(x, y, groupColor.getRGB());
@@ -1501,14 +1384,12 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             }
         }
 
-        // Update table data
         for (int i = 0; i < tableData.length; i++) {
             for (int j = 0; j < tableData[i].length; j++) {
                 tableData[i][j] = "";
             }
         }
 
-        // Create enhanced color panel renderer with centered square
         class ColorRenderer extends DefaultTableCellRenderer {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, 
@@ -1530,16 +1411,13 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             }
         }
 
-        // Set custom renderer for first column
         groupAnalysisTable.getColumnModel().getColumn(0).setCellRenderer(new ColorRenderer());
 
-        // Calculate total pixel count for percentage calculations
         int totalPixelsInGroups = 0;
         for (int i = 0; i < groupCount; i++) {
             totalPixelsInGroups += groupPixelCounts[i];
         }
 
-        // Update table with new data including accumulative percentages
         for (int i = 0; i < groupCount; i++) {
             int middleValue = (pixelGroups[i][0] + pixelGroups[i][1]) / 2;
             tableData[i][0] = new Color(middleValue, middleValue, middleValue);
@@ -1547,7 +1425,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             tableData[i][2] = pixelGroups[i][0] + "-" + pixelGroups[i][1];
             tableData[i][3] = groupPixelCounts[i];
             
-            // Calculate accumulative percentage for current and next row
             if (i < groupCount - 1) {
                 int accumulatedPixels = groupPixelCounts[i] + groupPixelCounts[i + 1];
                 double percentage = (accumulatedPixels * 100.0) / totalPixelsInGroups;
@@ -1557,12 +1434,10 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             }
         }
 
-        // Update image display
         Dimension scaledDim = getScaledDimension(width, height, ANALYSIS_PANEL_WIDTH / 3, ANALYSIS_PANEL_HEIGHT);
         Image scaledImage = binaryImage.getScaledInstance(scaledDim.width, scaledDim.height, Image.SCALE_SMOOTH);
         groupAnalysisImageLabel.setIcon(new ImageIcon(scaledImage));
 
-        // Refresh table
         groupAnalysisTable.repaint();
     }
 
@@ -1605,7 +1480,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false);
 
-        // Add title before controls
         JLabel titleLabel = new JLabel("Krāsas vienveidība");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1615,27 +1489,22 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         groupCountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         groupCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Modify slider to have range 1-51
         JSlider groupSlider = new JSlider(1, 51, groupCount);
         groupSlider.setPreferredSize(new Dimension(160, 20));
         groupSlider.setMaximumSize(new Dimension(160, 20));
         JPanel sliderPanel = createSliderWithButtons(groupSlider, groupCountLabel, "Grupu skaits");
 
-        // Update table data array size
-        tableData = new Object[51][5]; // Changed from 17 to 51
+        tableData = new Object[51][5]; 
 
-        // Table with reduced height
         groupAnalysisTable = new JTable(tableData, columnNames);
         groupAnalysisTable.setEnabled(false);
         JScrollPane tableScrollPane = new JScrollPane(groupAnalysisTable);
         tableScrollPane.setPreferredSize(new Dimension(400, 150));
 
-        // Add peak count label
         peakCountLabel = new JLabel("Krāsu grupu skaits: 0");
         peakCountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         peakCountLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Larger graph panel with full width
         JPanel graphPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -1643,20 +1512,18 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 drawGraph(g);
             }
         };
-        graphPanel.setPreferredSize(new Dimension(400, 250)); // Increased height
+        graphPanel.setPreferredSize(new Dimension(400, 250)); 
         graphPanel.setBorder(BorderFactory.createTitledBorder(""));
 
-        // Add peak threshold controls after peak count label
         peakThresholdLabel = new JLabel("Krāsu grupu skaita slieksnis: " + peakThreshold + "%");
         peakThresholdLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         peakThresholdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        peakThresholdSlider = new JSlider(0, 100, peakThreshold); // Initialize with current peakThreshold value
+        peakThresholdSlider = new JSlider(0, 100, peakThreshold); 
         peakThresholdSlider.setPreferredSize(new Dimension(160, 20));
         peakThresholdSlider.setMaximumSize(new Dimension(160, 20));
         JPanel peakSliderPanel = createSliderWithButtons(peakThresholdSlider, peakThresholdLabel, "Krāsu grupu skaita slieksnis");
 
-        // Add components to panel
         panel.add(titleLabel);
         panel.add(Box.createVerticalStrut(10));
         panel.add(groupCountLabel);
@@ -1673,21 +1540,19 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         panel.add(Box.createVerticalStrut(10));
         panel.add(graphPanel);
 
-        // Add slider listener
         groupSlider.addChangeListener(e -> {
             groupCount = groupSlider.getValue();
             groupCountLabel.setText("Grupu skaits: " + groupCount);
             updateGroupAnalysis();
             graphPanel.repaint();
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
-        // Add peak threshold slider listener
         peakThresholdSlider.addChangeListener(e -> {
             peakThreshold = peakThresholdSlider.getValue();
             peakThresholdLabel.setText("Krāsu grupu skaita slieksnis: " + peakThreshold + "%");
             graphPanel.repaint();
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
         return panel;
@@ -1722,38 +1587,31 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int width = 380;
-        int height = 230; // Increased height
-        int padding = 45; // Increased padding for labels
+        int height = 230; 
+        int padding = 45; 
         int bottom = height - padding;
         
-        // Draw axes with arrows
         g2.setColor(Color.BLACK);
-        // Y axis
         g2.drawLine(padding, height - padding, padding, padding);
         int[] yArrowX = {padding, padding - 5, padding + 5};
         int[] yArrowY = {padding, padding + 10, padding + 10};
         g2.fillPolygon(yArrowX, yArrowY, 3);
         
-        // X axis
         g2.drawLine(padding, bottom, width - padding, bottom);
         int[] xArrowX = {width - padding, width - padding - 10, width - padding - 10};
         int[] xArrowY = {bottom, bottom - 5, bottom + 5};
         g2.fillPolygon(xArrowX, xArrowY, 3);
 
-        // Axis labels
         g2.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        g2.drawString("Saladījums", padding - 35, padding - 10);
+        g2.drawString("Sadalījums", padding - 35, padding - 10);
         g2.drawString("Grupu pāri", width - padding - 30, bottom + 25);
 
-        // Plot data points
         if (groupCount > 1) {
-            // Calculate step size based on available width
             double availableWidth = width - (padding * 2);
             double xStep = availableWidth / (groupCount - 1);
             int[] points = new int[groupCount - 1];
             double maxValue = 0;
 
-            // Get percentage values and find max
             for (int i = 0; i < groupCount - 1; i++) {
                 String value = (String) tableData[i][4];
                 if (value != null && !value.equals("---")) {
@@ -1765,7 +1623,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
 
             maxValue = Math.ceil((maxValue + 5) / 10.0) * 10;
 
-            // Draw points and lines
             g2.setColor(THEME_COLOR);
             double prevX = padding;
             int prevY = bottom;
@@ -1775,15 +1632,11 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 double x = padding + (i + 1) * xStep;
                 int y = bottom - (int)((points[i] / maxValue) * (height - padding * 2));
                 
-                // Draw line
                 g2.drawLine((int)prevX, prevY, (int)x, y);
                 
-                // Draw point
                 g2.fillOval((int)x - 3, y - 3, 6, 6);
                 
-                // Check for peaks with updated conditions
                 if (i == 0) {
-                    // First point is a peak if it's above threshold and higher than next point
                     if (points[i] >= peakThreshold && points[i] > points[i+1]) {
                         peakCount++;
                         g2.setColor(Color.RED);
@@ -1791,7 +1644,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                         g2.setColor(THEME_COLOR);
                     }
                 } else if (i < points.length - 1) {
-                    // Middle points
                     if (points[i] > points[i-1] && points[i] > points[i+1]) {
                         if (points[i] >= peakThreshold) {
                             peakCount++;
@@ -1801,7 +1653,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                         }
                     }
                 } else {
-                    // Last point
                     if (points[i] > points[i-1] && points[i] >= peakThreshold) {
                         peakCount++;
                         g2.setColor(Color.RED);
@@ -1810,12 +1661,10 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                     }
                 }
 
-                // Draw x-axis labels with adaptive font size
                 String label = (i+1) + "-" + (i+2);
                 int fontSize = Math.min(12, (int)(availableWidth / (groupCount * 2)));
                 g2.setFont(new Font("Segoe UI", Font.PLAIN, Math.max(6, fontSize)));
                 
-                // Calculate text width for centering
                 FontMetrics fm = g2.getFontMetrics();
                 int textWidth = fm.stringWidth(label);
                 g2.drawString(label, (int)(x - textWidth/2), bottom + 15);
@@ -1824,10 +1673,8 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 prevY = y;
             }
 
-            // Update peak count label to show threshold info
             peakCountLabel.setText(String.format("Krāsu grupu skaits: %d", peakCount));
 
-            // Reset font for Y axis scale
             g2.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             g2.setColor(Color.BLACK);
             for (int i = 0; i <= maxValue; i += 20) {
@@ -1849,12 +1696,10 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        // Left side with image and pixel blocks
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setOpaque(false);
 
-        // Image panel
         JPanel imageWrapper = new JPanel(new BorderLayout());
         imageWrapper.setOpaque(false);
         
@@ -1870,12 +1715,10 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         imageBackground.add(fifthAnalysisImageLabel, BorderLayout.CENTER);
         imageWrapper.add(imageBackground, BorderLayout.CENTER);
 
-        // Add pixel color blocks panel
         JPanel pixelBlocksPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         pixelBlocksPanel.setOpaque(false);
         pixelBlocksPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-        // Black pixel block
         JPanel blackBlock = new JPanel(new BorderLayout());
         blackBlock.setOpaque(false);
         blackPixelPanel = new JPanel();
@@ -1889,7 +1732,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         blackBlock.add(blackPixelPanel, BorderLayout.CENTER);
         blackBlock.add(blackValueLabel, BorderLayout.SOUTH);
 
-        // White pixel block
         JPanel whiteBlock = new JPanel(new BorderLayout());
         whiteBlock.setOpaque(false);
         whitePixelPanel = new JPanel();
@@ -1909,28 +1751,24 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         leftPanel.add(imageWrapper);
         leftPanel.add(pixelBlocksPanel);
 
-        // Right side controls
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setOpaque(false);
 
-        // Add title
         JLabel titleLabel = new JLabel("Kontrasts");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setForeground(THEME_COLOR);
 
-        // Add threshold slider
-        JLabel thresholdLabel = new JLabel("Balts-Melns slieksnis: " + contrastThreshold);  // Changed from moduleThreshold
+        JLabel thresholdLabel = new JLabel("Balts-Melns slieksnis: " + contrastThreshold);  
         thresholdLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         thresholdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JSlider thresholdSlider = new JSlider(0, 255, contrastThreshold);  // Changed from moduleThreshold
+        JSlider thresholdSlider = new JSlider(0, 255, contrastThreshold);  
         thresholdSlider.setPreferredSize(new Dimension(160, 20));
         thresholdSlider.setMaximumSize(new Dimension(160, 20));
         JPanel sliderPanel = createSliderWithButtons(thresholdSlider, thresholdLabel, "Balts-melns slieksnis");
 
-        // Add contrast labels
         contrastLabel = new JLabel("Kontrasts: 0", SwingConstants.CENTER);
         contrastLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         contrastLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -1939,7 +1777,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         relativeContrastLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         relativeContrastLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add components to right panel
         rightPanel.add(Box.createVerticalGlue());
         rightPanel.add(titleLabel);
         rightPanel.add(Box.createVerticalStrut(10));
@@ -1952,9 +1789,8 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         rightPanel.add(relativeContrastLabel);
         rightPanel.add(Box.createVerticalGlue());
 
-        // Add slider listener
         thresholdSlider.addChangeListener(e -> {
-            contrastThreshold = thresholdSlider.getValue();  // Changed from moduleThreshold
+            contrastThreshold = thresholdSlider.getValue();  
             thresholdLabel.setText("Balts-Melns slieksnis: " + contrastThreshold);
             
             if (reducedMatrix != null) {
@@ -1962,10 +1798,9 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 int height = reducedMatrix.length;
                 updateFifthAnalysisDisplay(width, height);
             }
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
-        // Initially show the image and calculate values
         if (reducedMatrix != null) {
             int width = reducedMatrix[0].length;
             int height = reducedMatrix.length;
@@ -1988,12 +1823,11 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             double blackSum = 0;
             double whiteSum = 0;
             
-            // First pass: calculate averages using original values
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (reducedMatrix[y][x] != -1) {
                         int pixelValue = reducedMatrix[y][x];
-                        if (pixelValue > contrastThreshold) {  // Changed from moduleThreshold
+                        if (pixelValue > contrastThreshold) {  
                             whiteSum += pixelValue;
                             whitePixelCount++;
                         } else {
@@ -2004,29 +1838,25 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 }
             }
             
-            // Calculate averages and handle edge cases
-            int blackAvg = blackPixelCount > 0 ? (int)(blackSum / blackPixelCount) : contrastThreshold;  // Changed from moduleThreshold
-            int whiteAvg = whitePixelCount > 0 ? (int)(whiteSum / whitePixelCount) : contrastThreshold;  // Changed from moduleThreshold
+            int blackAvg = blackPixelCount > 0 ? (int)(blackSum / blackPixelCount) : contrastThreshold;  
+            int whiteAvg = whitePixelCount > 0 ? (int)(whiteSum / whitePixelCount) : contrastThreshold;  
             
-            // Second pass: create binary display image
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (reducedMatrix[y][x] == -1) {
                         newImage.setRGB(x, y, new Color(0, 0, 0, 0).getRGB());
                     } else {
-                        int value = reducedMatrix[y][x] > contrastThreshold ? 255 : 0;  // Changed from moduleThreshold
+                        int value = reducedMatrix[y][x] > contrastThreshold ? 255 : 0;  
                         newImage.setRGB(x, y, new Color(value, value, value).getRGB());
                     }
                 }
             }
             
-            // Update color blocks with actual average values
             blackPixelPanel.setBackground(new Color(blackAvg, blackAvg, blackAvg));
             whitePixelPanel.setBackground(new Color(whiteAvg, whiteAvg, whiteAvg));
             blackValueLabel.setText(String.valueOf(blackAvg));
             whiteValueLabel.setText(String.valueOf(whiteAvg));
             
-            // Calculate contrast values with safeguards
             int contrast = 0;
             double relativeContrast = 0.0;
             
@@ -2043,7 +1873,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 relativeContrastLabel.setText("Relatīvais kontrasts: 0%");
             }
             
-            // Update image
             Dimension scaledDim = getScaledDimension(width, height, ANALYSIS_PANEL_WIDTH / 3, ANALYSIS_PANEL_HEIGHT);
             Image newScaled = newImage.getScaledInstance(scaledDim.width, scaledDim.height, Image.SCALE_SMOOTH);
             fifthAnalysisImageLabel.setIcon(new ImageIcon(newScaled));
@@ -2061,7 +1890,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
 
-        // Left side - Image panel with title
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setOpaque(false);
@@ -2082,7 +1910,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         imageWrapper.add(imageBackground, BorderLayout.CENTER);
         leftPanel.add(imageWrapper);
 
-        // Right side - Stats and controls
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setOpaque(false);
@@ -2108,7 +1935,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
 
         Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
 
-        // Add first 4 labels to stats panel
         for (int i = 0; i < 4; i++) {
             whiteClusterInfoLabels[i].setFont(labelFont);
             whiteClusterInfoLabels[i].setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -2116,20 +1942,17 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             statsPanel.add(Box.createVerticalStrut(5));
         }
 
-        // Add the threshold label and slider
         whiteClusterInfoLabels[4].setFont(labelFont);
         whiteClusterInfoLabels[4].setAlignmentX(Component.CENTER_ALIGNMENT);
         statsPanel.add(whiteClusterInfoLabels[4]);
         statsPanel.add(Box.createVerticalStrut(5));
 
-        // Create and add module threshold slider right after its label
         JSlider thresholdSlider = new JSlider(0, 255, whiteClusterThreshold);
         thresholdSlider.setPreferredSize(new Dimension(160, 20));
         JPanel thresholdSliderPanel = createSliderWithButtons(thresholdSlider, whiteClusterInfoLabels[4], "Balts-Melns slieksnis");
         statsPanel.add(thresholdSliderPanel);
         statsPanel.add(Box.createVerticalStrut(10));
 
-        // Add size threshold label and slider
         whiteClusterInfoLabels[5].setFont(labelFont);
         whiteClusterInfoLabels[5].setAlignmentX(Component.CENTER_ALIGNMENT);
         statsPanel.add(whiteClusterInfoLabels[5]);
@@ -2143,14 +1966,14 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             whiteClusterThreshold = thresholdSlider.getValue();
             whiteClusterInfoLabels[4].setText("Balts-Melns slieksnis: " + whiteClusterThreshold);
             updateWhiteClusterAnalysis();
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
         sizeSlider.addChangeListener(e -> {
             whiteClusterSliderValue = sizeSlider.getValue() / 10.0;
             whiteClusterInfoLabels[5].setText("Pilnīgo baltu strīpu filtrācijas slieksnis: " + String.format("%.1f", whiteClusterSliderValue) + "%");
             updateWhiteClusterAnalysis();
-            setCustomCalibration(); // Add this line
+            setCustomCalibration(); 
         });
 
         rightPanel.add(Box.createVerticalGlue());
@@ -2160,7 +1983,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         rightPanel.add(Box.createVerticalStrut(10));
         rightPanel.add(sizeSliderPanel);
         
-        // Add cluster percentage label
         clusterPercentageLabel = new JLabel("Pilnīgo baltu strīpu īpatsvars: 0%");
         clusterPercentageLabel.setFont(labelFont);
         clusterPercentageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -2185,11 +2007,9 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             
             BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             
-            // First draw all non-transparent pixels in their original binary form
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (reducedMatrix[y][x] != -1) {
-                        // Show black pixels as black and white pixels as white
                         if (reducedMatrix[y][x] > whiteClusterThreshold) {
                             newImage.setRGB(x, y, Color.WHITE.getRGB());
                         } else {
@@ -2202,8 +2022,7 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             }
 
             boolean[][] visited = new boolean[height][width];
-            // Update how we store and use the slider value
-            whiteClusterSliderValue = Math.round(whiteClusterSliderValue * 10) / 10.0; // Round to 1 decimal
+            whiteClusterSliderValue = Math.round(whiteClusterSliderValue * 10) / 10.0; 
             double minClusterPercentage = whiteClusterSliderValue;
             int minClusterSize = (int)((minClusterPercentage / 100.0) * reducedPixelCount);
             
@@ -2238,7 +2057,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 }
             }
 
-            // Fill transparent areas
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (newImage.getRGB(x, y) == 0) {
@@ -2247,29 +2065,24 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 }
             }
 
-            // Update statistics
             whiteClusterValue1 = totalClusters;
             whiteClusterValue2 = totalArea * 100.0 / reducedPixelCount;
             whiteClusterValue3 = validClusters;
             whiteClusterValue4 = validArea * 100.0 / reducedPixelCount;
 
-            // Update labels
             whiteClusterInfoLabels[0].setText("Baltu strīpu skaits: " + (int)whiteClusterValue1);
             whiteClusterInfoLabels[1].setText("Baltu strīpu kopējā platība: " + String.format("%.2f%%", whiteClusterValue2));
             whiteClusterInfoLabels[2].setText("Pilnīgo baltu strīpu skaits: " + (int)whiteClusterValue3);
             whiteClusterInfoLabels[3].setText("Pilnīgo baltu strīpu platība: " + String.format("%.2f%%", whiteClusterValue4));
 
-            // Update cluster percentage
             double clusterPercentage = totalClusters > 0 ? 
                 (validClusters * 100.0 / totalClusters) : 0.0;
             clusterPercentageLabel.setText(String.format(
                 "Pilnīgo baltu strīpu īpatsvars: %.1f%%", clusterPercentage));
 
-            // Update labels with correct formatting
             whiteClusterInfoLabels[5].setText("Pilnīgo baltu strīpu filtrācijas slieksnis: " + 
                 String.format("%.1f%%", whiteClusterSliderValue));
 
-            // Update image
             Dimension scaledDim = getScaledDimension(width, height, ANALYSIS_PANEL_WIDTH / 3, ANALYSIS_PANEL_HEIGHT);
             Image newScaled = newImage.getScaledInstance(scaledDim.width, scaledDim.height, Image.SCALE_SMOOTH);
             whiteClusterImageLabel.setIcon(new ImageIcon(newScaled));
@@ -2326,7 +2139,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         SwingUtilities.invokeLater(() -> new GPA_Analize().setVisible(true));
     }
 
-    // Add new inner class to store calibration values
     private static class CalibrationValues {
         int boundaryThreshold;
         int brightnessThreshold;
@@ -2336,7 +2148,7 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         double whiteClusterSliderValue;
         boolean use4PixelRule;
         String name;
-        int groupCount;          // Add new fields
+        int groupCount;          
         int peakThreshold;
         int contrastThreshold;
         
@@ -2357,7 +2169,6 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         }
     }
 
-    // Add this to the setupWindow method after creating crosswalkSelector
     private void addCalibrationSelector(JPanel titleBar) {
         JLabel calibrationLabel = new JLabel("Kalibrācijas šablons:");
         calibrationLabel.setForeground(Color.WHITE);
@@ -2372,20 +2183,18 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             if (e.getActionCommand().equals("comboBoxChanged")) {
                 currentCalibrationIndex = calibrationSelector.getSelectedIndex();
                 applyCalibrationValues(currentCalibrationIndex);
-                isCustomCalibration = false; // Reset custom flag when a predefined calibration is selected
+                isCustomCalibration = false; 
             }
         });
         
         loadCalibrationValues();
     }
 
-    // Replace Excel loading with text file loading
     private void loadCalibrationValues() {
-        // Add default calibration first with new values
         calibrationsList.add(new CalibrationValues(
             "Tests", 11, 22, 33, 4.4, 55, 6.6, true, 1, 0, 75));
         calibrationSelector.addItem("Tests");
-        calibrationSelector.addItem("Patstāvīgi pielāgots"); // Add "Custom" option
+        calibrationSelector.addItem("Patstāvīgi pielāgots"); 
 
         try {
             File file = new File("kalibracija.txt");
@@ -2394,30 +2203,28 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 return;
             }
 
-            // Clear default values if file loads successfully
             calibrationsList.clear();
             calibrationSelector.removeAllItems();
 
-            // Read text file
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(",");
-                    if (parts.length == 11) { // Updated length to include new values
+                    if (parts.length == 11) { 
                         try {
                             CalibrationValues cal = new CalibrationValues(
-                                parts[0].trim(),                    // name
-                                Integer.parseInt(parts[2].trim()),  // boundaryThreshold
-                                Integer.parseInt(parts[3].trim()),  // brightnessThreshold
-                                Integer.parseInt(parts[4].trim()),  // moduleThreshold
-                                Double.parseDouble(parts[5].trim()),// moduleSliderValue
-                                Integer.parseInt(parts[6].trim()),  // whiteClusterThreshold
-                                Double.parseDouble(parts[7].trim()),// whiteClusterSliderValue
-                                Boolean.parseBoolean(parts[1].trim()),// use4PixelRule
-                                Integer.parseInt(parts[8].trim()),  // groupCount
-                                Integer.parseInt(parts[9].trim()),  // peakThreshold
-                                Integer.parseInt(parts[10].trim())  // contrastThreshold
+                                parts[0].trim(),                    
+                                Integer.parseInt(parts[2].trim()),  
+                                Integer.parseInt(parts[3].trim()),  
+                                Integer.parseInt(parts[4].trim()),  
+                                Double.parseDouble(parts[5].trim()), 
+                                Integer.parseInt(parts[6].trim()),  
+                                Double.parseDouble(parts[7].trim()), 
+                                Boolean.parseBoolean(parts[1].trim()),
+                                Integer.parseInt(parts[8].trim()),  
+                                Integer.parseInt(parts[9].trim()),  
+                                Integer.parseInt(parts[10].trim())  
                             );
                             
                             calibrationsList.add(cal);
@@ -2432,14 +2239,12 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
             System.out.println("Error loading calibration file: " + e.getMessage());
         }
 
-        // Select first calibration
         if (calibrationSelector.getItemCount() > 0) {
             calibrationSelector.setSelectedIndex(0);
             applyCalibrationValues(0);
         }
     }
 
-    // Add method to apply calibration values
     private void applyCalibrationValues(int index) {
         if (index < 0 || index >= calibrationsList.size()) return;
         
@@ -2455,13 +2260,11 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         peakThreshold = cal.peakThreshold;
         contrastThreshold = cal.contrastThreshold;
         
-        // Update the peak threshold slider and label if they exist
         if (peakThresholdSlider != null && peakThresholdLabel != null) {
             peakThresholdSlider.setValue(peakThreshold);
             peakThresholdLabel.setText("Krāsu grupu skaita slieksnis: " + peakThreshold + "%");
         }
         
-        // Update all displays
         if (currentAnalysisImage != null) {
             String baseFolder = String.format("Results/%s", currentResultDir);
             String selectedNum = (String)crosswalkSelector.getSelectedItem();
@@ -2476,27 +2279,23 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
         }
     }
 
-    // Replace the saveAnalysis method
     private void saveAnalysis() {
         try {
             String selectedResult = (String)resultSelector.getSelectedItem();
             String selectedNum = (String)crosswalkSelector.getSelectedItem();
             if (selectedNum == null || selectedResult == null) return;
             
-            // Create analysis history directory if it doesn't exist
             File analysisDir = new File("analizes_vesture");
             if (!analysisDir.exists()) {
                 analysisDir.mkdir();
             }
             
-            // Get current date and time
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
             String timestamp = now.format(dateFormatter);
             DateTimeFormatter readableFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String readableTime = now.format(readableFormatter);
             
-            // Create filename: analize_<foldername>_<number>_<timestamp>.txt
             String filename = String.format("analize_%s_%s_%s.txt", 
                 selectedResult, selectedNum, timestamp);
             
@@ -2522,26 +2321,22 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                 writer.println(whiteClusterThreshold + " - Balts-Melns slieksnis (Baltu strīpu salīdzinājums).");
                 writer.println(String.format("%.1f%%", whiteClusterSliderValue) + " - Pilnīgo baltu strīpu filtrācijas slieksnis (Baltu strīpu salīdzinājums).");
                 writer.println(groupCount + " - Grupu skaits.");
-                writer.println(peakThreshold + "% - Krāsu grupu skaita slieksnis.");  // No change needed as % is already included
+                writer.println(peakThreshold + "% - Krāsu grupu skaita slieksnis.");  
                 writer.println(contrastThreshold + " - Balts-Melns slieksnis (Kontrasts).");
                 
                 writer.println("\nAtkarīgie lielumi:");
-                // White/Black pixel counts from first module
                 PixelCounts pixelCounts = countMatrixPixels(reducedMatrix);
                 writer.println(pixelCounts.white + " - Balti pikseļi.");
                 writer.println(pixelCounts.black + " - Melni pikseļi.");
                 
-                // Values from module "GPA strīpu garuma kļūdas"
                 double percentage = Math.ceil((double) pixelCounts.white / (pixelCounts.white + pixelCounts.black) * 100 * 100) / 100.0;
                 writer.println(String.format("%.2f%%", percentage) + " - Baltu pikseļu relatīvais daudzums.");
                 
-                // Values from module "Caurumu skaits un platība"
                 writer.println((int)moduleValue1 + " - Caurumu skaits.");
                 writer.println(String.format("%.2f%%", moduleValue2) + " - Caurumu kopējā platība.");
                 writer.println((int)moduleValue3 + " - Lielo caurumu skaits.");
                 writer.println(String.format("%.2f%%", moduleValue4) + " - Lielo caurumu platība.");
                 
-                // Values from module "Baltu strīpu salīdzinājums"
                 writer.println((int)whiteClusterValue1 + " - Baltu strīpu skaits.");
                 writer.println(String.format("%.2f%%", whiteClusterValue2) + " - Baltu strīpu kopējā platība.");
                 writer.println((int)whiteClusterValue3 + " - Pilnīgo baltu strīpu skaits.");
@@ -2550,11 +2345,9 @@ private int floodFill(int[][] matrix, boolean[][] visited, int startX, int start
                     (whiteClusterValue3 * 100.0 / whiteClusterValue1) : 0.0;
                 writer.println(String.format("%.1f%%", clusterPercentage) + " - Pilnīgo baltu strīpu īpatsvars.");
                 
-                // Add color group count with percentage
                 String colorGroupCount = peakCountLabel.getText();
-                writer.println(colorGroupCount);  // Already contains: "Krāsu grupu skaits: X"
+                writer.println(colorGroupCount);  
                 
-                // Values from module "Kontrasts"
                 int whiteAvg = getAverageWhiteValue();
                 int blackAvg = getAverageBlackValue();
                 int contrast = whiteAvg - blackAvg;
@@ -2581,7 +2374,7 @@ private int getAverageWhiteValue() {
     int count = 0;
     for (int[] row : reducedMatrix) {
         for (int pixel : row) {
-            if (pixel != -1 && pixel > contrastThreshold) {  // Changed from moduleThreshold
+            if (pixel != -1 && pixel > contrastThreshold) {  
                 sum += pixel;
                 count++;
             }
@@ -2597,7 +2390,7 @@ private int getAverageBlackValue() {
     int count = 0;
     for (int[] row : reducedMatrix) {
         for (int pixel : row) {
-            if (pixel != -1 && pixel <= contrastThreshold) {  // Changed from moduleThreshold
+            if (pixel != -1 && pixel <= contrastThreshold) {  
                 sum += pixel;
                 count++;
             }
